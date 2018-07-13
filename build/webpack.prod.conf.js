@@ -11,7 +11,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
-const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
+const WorkboxWebpackPlugin = require('workbox-webpack-plugin')
 const loadMinified = require('./load-minified')
 
 const env = config.build.env
@@ -99,13 +99,14 @@ const webpackConfig = merge(baseWebpackConfig, {
       }
     ]),
     // service worker caching
-    new SWPrecacheWebpackPlugin({
-      cacheId: 'kinsaku',
-      filename: 'service-worker.js',
-      staticFileGlobs: ['dist/**/*.{js,html,css}'],
-      minify: true,
-      stripPrefix: 'dist/'
-    })
+    new WorkboxWebpackPlugin.GenerateSW({
+      cacheId: 'kinsaku-pwa',
+      // globDirectory: config.build.assetsRoot,
+      // globPatterns: ['**/*.{html,js,css}'],
+      swDest: path.join(config.build.assetsRoot, 'service-worker.js'),
+      skipWaiting: false,
+      clientsClaim: true
+    }),
   ]
 })
 
